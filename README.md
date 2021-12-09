@@ -33,3 +33,13 @@ de reiniciar o programa.
 
 ## Quando uma página solicitada não é encontrado.
 <img src="assets/404.png" >
+
+---
+
+## INFO: Requisição 
+
+<img src="assets/request.png" >
+
+## INFO: Resposta
+
+<img src="assets/response.png" >

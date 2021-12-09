@@ -1,0 +1,1045 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png">
+    <meta name="apple-mobile-web-app-title" content="React">
+    <title>Netflix</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <style>
+        @import 'https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900';
+        body {
+            background: #221f1f;
+            color: #ffffff;
+            font-family: "Lato", sans-serif;
+        }
+        h2, .TitleList .Title {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 1em;
+        }
+        p {
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 1em;
+        }
+        .Header {
+            /* FF3.6-15 */
+            /* Chrome10-25,Safari5.1-6 */
+            background: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0) 100%);
+            /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#a6000000", endColorstr="#00000000",GradientType=0 );
+            /* IE6-9 */
+            display: flex;
+            padding: 40px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            box-sizing: border-box;
+            z-index: 5;
+        }
+        .Logo {
+            width: 151px;
+            height: 41px;
+            margin-right: 10px;
+            transition: margin 0.125s ease;
+        }
+        .Logo svg {
+            transform: scale(0.5);
+            transform-origin: 0 0;
+        }
+        .Logo svg path {
+            fill: #e50914;
+            transition: fill 0.125s ease;
+        }
+        .Logo:hover {
+            cursor: pointer;
+            margin-top: 2px;
+        }
+        .Logo:hover svg path {
+            fill: #ffffff !important;
+        }
+        .Navigation ul {
+            display: flex;
+            height: 37px;
+            align-items: center;
+            padding: 0 10px;
+        }
+        .Navigation ul li {
+            font-weight: 400;
+            padding: 7px 10px;
+            font-size: 14px;
+            transition: background 0.125s ease;
+            border-radius: 3px;
+        }
+        .Navigation ul li:hover {
+            background: #e50914;
+            cursor: pointer;
+        }
+        .Search {
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .Search input {
+            font-family: "Lato", sans-serif;
+            font-weight: 300;
+            font-size: 14px;
+            height: 37px;
+            width: 20%;
+            background: transparent;
+            color: #ffffff;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border: 0;
+            border: 2px solid rgba(245, 245, 241, 0.1);
+            outline: none;
+            border-radius: 37px;
+            padding: 0 10px;
+            pointer-events: all;
+            transition: border 0.25s ease, width 0.125s ease 0.125s;
+        }
+        .Search input:focus {
+            border: 2px solid #e50914;
+            width: 30%;
+        }
+        .UserProfile {
+            margin-left: auto;
+        }
+        .UserProfile .User {
+            display: flex;
+        }
+        .UserProfile .User .image {
+            border-radius: 44px;
+            margin-left: 10px;
+            overflow: hidden;
+            width: 44px;
+            height: 44px;
+            box-sizing: border-box;
+            border: 3px solid transparent;
+            transition: border 0.125s ease;
+        }
+        .UserProfile .User .image img {
+            width: 100%;
+            display: block;
+        }
+        .UserProfile .User .name {
+            align-items: center;
+            display: flex;
+            font-size: 18px;
+            font-weight: 300;
+            height: 44px;
+        }
+        .UserProfile .User:hover {
+            cursor: pointer;
+        }
+        .UserProfile .User:hover .image {
+            border: 3px solid #e50914;
+        }
+        .UserProfile .UserProfile-menu {
+            display: none;
+        }
+        .Hero {
+            width: 100%;
+            position: relative;
+            background-size: cover;
+            min-height: 800px;
+        }
+        .Hero .content {
+            position: relative;
+            z-index: 4;
+            width: 500px;
+            left: 10vw;
+            top: 10vw;
+        }
+        .Hero .content .logo {
+            max-width: 400px;
+            display: block;
+            position: relative;
+            left: -5px;
+        }
+        .Hero .content p {
+            width: 100%;
+        }
+        .Hero .content .button-wrapper {
+            display: flex;
+            width: 400px;
+            margin-top: 30px;
+        }
+        .Hero .content .button-wrapper .Button:first-child {
+            margin-right: 10px;
+        }
+        .Hero .overlay {
+            /* FF3.6-15 */
+            /* Chrome10-25,Safari5.1-6 */
+            background: linear-gradient(to bottom, #221f1f 0%, rgba(34, 31, 31, 0) 100%);
+            /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#a6000000", endColorstr="#00000000",GradientType=0 );
+            /* IE6-9 */
+            height: 100%;
+            position: absolute;
+            z-index: 3;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transform: rotate(180deg);
+        }
+        .Button {
+            background: transparent;
+            display: flex;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #ffffff;
+            padding: 20px;
+            box-sizing: border-box;
+            border: 2px solid rgba(245, 245, 241, 0.2);
+            border-radius: 44px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: border 0.125s ease, background 0.125s ease;
+        }
+        .Button:hover {
+            border: 2px solid #f5f5f1;
+        }
+        .Button[data-primary=true] {
+            border: 2px solid #e50914;
+        }
+        .Button[data-primary=true]:hover {
+            background: #e50914;
+        }
+        .Hero ~ .TitleList:nth-child(3) {
+            margin-top: -10vw;
+            position: relative;
+            z-index: 4;
+        }
+        .TitleList {
+            padding: 20px 40px;
+            box-sizing: border-box;
+            transition: opacity 3s ease;
+            opacity: 0;
+        }
+        .TitleList .titles-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            width: calc(100vw - 80px);
+            box-sizing: border-box;
+            justify-content: space-between;
+        }
+        .TitleList[data-loaded=true] {
+            opacity: 1;
+        }
+        .Item {
+            width: calc(20% - 10px);
+            min-width: calc(20% - 10px);
+            background-color: #000000;
+            flex: 1 0 auto;
+            background-position: center;
+            background-size: 100%;
+            height: 200px;
+            background-repeat: no-repeat;
+            overflow: hidden;
+            margin-right: 10px;
+            transition: background 1s ease;
+        }
+        .Item:nth-child(n+6) {
+            margin-top: 20px;
+        }
+        .Item:last-child {
+            margin-right: 0;
+        }
+        .Item .overlay {
+            /* FF3.6-15 */
+            /* Chrome10-25,Safari5.1-6 */
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
+            /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#a6000000", endColorstr="#00000000",GradientType=0 );
+            /* IE6-9 */
+            padding: 20px;
+            position: relative;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.125s ease;
+        }
+        .Item .overlay .title {
+            font-size: 22px;
+            font-weight: 200;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .Item .overlay .rating {
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.25s ease 0.125s;
+        }
+        .Item .overlay .plot {
+            font-size: 14px;
+            display: -webkit-box;
+            margin-top: 100px;
+            font-weight: 300;
+            line-height: 1.6;
+            opacity: 0;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: margin 0.25s ease 0.125s, opacity 0.25s ease 0.25s;
+        }
+        .Item:hover {
+            background-size: 150%;
+        }
+        .Item:hover .overlay {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .Item:hover .overlay .plot {
+            margin-top: 10px;
+            opacity: 1;
+        }
+        .Item:hover .overlay .title {
+            opacity: 1;
+        }
+        .Item:hover .overlay .rating {
+            opacity: 1;
+        }
+        .Item:hover .overlay .ListToggle {
+            opacity: 1;
+        }
+        .ListToggle {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            width: 32px;
+            height: 32px;
+            font-size: 16px;
+            border-radius: 32px;
+            overflow: hidden;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            opacity: 0;
+        }
+        .ListToggle:hover {
+            border: 2px solid #ffffff;
+        }
+        .ListToggle:hover div {
+            top: -32px;
+        }
+        .ListToggle[data-toggled=true] {
+            background: #e50914;
+            border: 2px solid #e50914;
+        }
+        .ListToggle[data-toggled=true] div {
+            top: -32px;
+        }
+        .ListToggle div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 64px;
+            width: 32px;
+            transition: 0.125s ease;
+        }
+        .ListToggle div i {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 32px;
+            width: 32px;
+        }
+    </style>
+    <script>
+        window.console = window.console || function(t) {};
+    </script>
+    <script>
+        if (document.location.search.match(/type=embed/gi)) {
+            window.parent.postMessage("resize", "*");
+        }
+    </script>
+</head>
+<body translate="no" class="vsc-initialized">
+<div id="app">
+    <div data-reactid=".0">
+        <header class="Header" data-reactid=".0.0">
+            <div id="logo" class="Logo" data-reactid=".0.0.0">
+                <svg version="1.1" width="300" height="81.386726" id="svg3262" data-reactid=".0.0.0.0">
+                    <g transform="translate(-384.28572,-428.81172)" id="layer1" data-reactid=".0.0.0.0.0">
+                        <g transform="matrix(2.5445375,0,0,2.5445375,1157.1714,-1457.8678)" id="g3235" data-reactid=".0.0.0.0.0.0">
+                            <path d="m -203.09972,771.41415 c 1.6425,0.15875 3.2825,0.33 4.92,0.5075 l 3.615,-8.92625 3.43625,9.74875 c 1.76375,0.22125 3.525,0.4525 5.2825,0.695 l -6.02375,-17.09625 6.02625,-14.88 -5.10375,0 -0.0525,0.0725 -3.255,8.03875 -2.8575,-8.11125 -5.03875,0 5.2025,14.7625 -6.15125,15.18875 z" id="path3015" style="fill:#b81d24;fill-opacity:1;fill-rule:nonzero;stroke:none;" data-reactid=".0.0.0.0.0.0.0"></path>
+                            <path d="m -206.91147,771.06478 0,-29.60125 -5.0375,0 0,29.18625 c 1.68125,0.12875 3.36125,0.26875 5.0375,0.415" id="path3019" style="fill:#b81d24;fill-opacity:1;fill-rule:nonzero;stroke:none;" data-reactid=".0.0.0.0.0.0.1"></path>
+                            <path d="m -244.7486,769.4089 c 1.36,0 2.7175,0.01 4.07375,0.0213 l 0,-10.875 6.05125,0 0,-4.63125 -6.05125,0 0,-7.825 6.96875,0 0,-4.63625 -12.02625,0 0,27.95 c 0.3275,0 0.655,-0.004 0.98375,-0.004" id="path3023" style="fill:#b81d24;fill-opacity:1;fill-rule:nonzero;stroke:none;" data-reactid=".0.0.0.0.0.0.2"></path>
+                            <path d="m -260.3881,769.69191 c 1.6775,-0.06 3.3575,-0.11 5.04,-0.15125 l 0,-23.44125 4.7075,0 0,-4.63625 -14.45625,0 0,4.63625 4.70875,0 0,23.5925 z" id="path3035" style="fill:#b81d24;fill-opacity:1;fill-rule:nonzero;stroke:none;" data-reactid=".0.0.0.0.0.0.3"></path>
+                            <path d="m -298.91059,772.81378 0,-17.63625 5.96375,16.92375 c 1.83375,-0.20625 3.67125,-0.4 5.5125,-0.5825 l 0,-30.055 -4.8325,0 0,18.2675 -6.43625,-18.2675 -0.2075,0 -4.8325,0 0,31.98375 0.03,0 c 1.5975,-0.22125 3.19875,-0.43125 4.8025,-0.63375" id="path3039" style="fill:#b81d24;fill-opacity:1;fill-rule:nonzero;stroke:none;" data-reactid=".0.0.0.0.0.0.4"></path>
+                            <path d="m -269.95297,746.09903 0,-4.63625 -12.0275,0 0,24.9125 0,4.6375 0,0.004 c 3.99125,-0.345 7.99625,-0.63375 12.0175,-0.86875 l 0,-0.004 0,-1.33625 0,-3.3 c -2.325,0.135 -4.645,0.29125 -6.96,0.46375 l 0,-7.415 6.05125,0 0,-4.63375 -6.05125,0 0,-7.82375 6.97,0 z" id="path3051" style="fill:#b81d24;fill-opacity:1;fill-rule:nonzero;stroke:none;" data-reactid=".0.0.0.0.0.0.5"></path>
+                            <path d="m -223.72272,765.2864 0,-23.82375 -5.05875,0 0,23.605 0,4.63625 0,0.005 c 4.02375,0.1475 8.0325,0.35375 12.0275,0.6125 l 0,-0.006 0,-1.4975 0,-3.13875 c -2.31875,-0.15 -4.64125,-0.28 -6.96875,-0.3925" id="path3055" style="fill:#b81d24;fill-opacity:1;fill-rule:nonzero;stroke:none;" data-reactid=".0.0.0.0.0.0.6"></path>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+            <div id="navigation" class="Navigation" data-reactid=".0.0.1">
+                <nav data-reactid=".0.0.1.0">
+                    <ul data-reactid=".0.0.1.0.0">
+                        <li data-reactid=".0.0.1.0.0.0">Browse</li>
+                        <li data-reactid=".0.0.1.0.0.1">My list</li>
+                        <li data-reactid=".0.0.1.0.0.2">Top picks</li>
+                        <li data-reactid=".0.0.1.0.0.3">Recent</li>
+                    </ul>
+                </nav>
+            </div>
+            <form id="search" class="Search" data-reactid=".0.0.2"><input type="search" placeholder="Search for a title..." data-reactid=".0.0.2.0"></form>
+            <div class="UserProfile" data-reactid=".0.0.3">
+                <div class="User" data-reactid=".0.0.3.0">
+                    <div class="name" data-reactid=".0.0.3.0.0">Thiago Alves</div>
+                    <div class="image" data-reactid=".0.0.3.0.1"><img src="https://avatars.githubusercontent.com/u/20546278?v=4" data-reactid=".0.0.3.0.1.0"></div>
+                </div>
+                <div class="UserProfile-menu" data-reactid=".0.0.3.1">
+                    <div class="UserProfileSwitch" data-reactid=".0.0.3.1.0">
+                        <ul data-reactid=".0.0.3.1.0.0">
+                            <li data-reactid=".0.0.3.1.0.0.0">
+                                <div class="UserProfile-image" data-reactid=".0.0.3.1.0.0.0.0"><img src="http://lorempixel.com/96/96" data-reactid=".0.0.3.1.0.0.0.0.0"></div>
+                                <div class="UserProfile-name" data-reactid=".0.0.3.1.0.0.0.1">Alexander</div>
+                            </li>
+                            <li data-reactid=".0.0.3.1.0.0.1">
+                                <div class="UserProfile-image" data-reactid=".0.0.3.1.0.0.1.0"><img src="http://lorempixel.com/96/96" data-reactid=".0.0.3.1.0.0.1.0.0"></div>
+                                <div class="UserProfile-name" data-reactid=".0.0.3.1.0.0.1.1">Mattias</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="UserNavigation" data-reactid=".0.0.3.1.1">
+                        <ul data-reactid=".0.0.3.1.1.0">
+                            <li data-reactid=".0.0.3.1.1.0.0">Your Account</li>
+                            <li data-reactid=".0.0.3.1.1.0.1">Help Center</li>
+                            <li data-reactid=".0.0.3.1.1.0.2">Sign out of Netflix</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div id="hero" class="Hero" style="background-image:url(https://wallpaperaccess.com/full/1097130.jpg);" data-reactid=".0.1">
+            <div class="content" data-reactid=".0.1.0">
+                <img class="logo" src="http://www.returndates.com/backgrounds/narcos.logo.png" alt="" data-reactid=".0.1.0.0">
+                <h2 data-reactid=".0.1.0.1">Season 2 now available</h2>
+                <p data-reactid=".0.1.0.2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque id quam sapiente unde voluptatum alias vero debitis, magnam quis quod.</p>
+                <div class="button-wrapper" data-reactid=".0.1.0.3"><a href="#" class="Button" data-primary="true" data-reactid=".0.1.0.3.0">Watch now</a><a href="#" class="Button" data-primary="false" data-reactid=".0.1.0.3.1">+ My list</a></div>
+            </div>
+            <div class="overlay" data-reactid=".0.1.1"></div>
+        </div>
+        <div class="TitleList" data-loaded="true" data-reactid=".0.2">
+            <div class="Title" data-reactid=".0.2.0">
+                <h1 data-reactid=".0.2.0.0">Top TV picks for Jack</h1>
+                <div class="titles-wrapper" data-reactid=".0.2.0.1">
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/1R68vl3d5s86JsS2NPjl8UoMqIS.jpg);" data-reactid=".0.2.0.1.$88329">
+                        <div class="overlay" data-reactid=".0.2.0.1.$88329.0">
+                            <div class="title" data-reactid=".0.2.0.1.$88329.0.0">Hawkeye</div>
+                            <div class="rating" data-reactid=".0.2.0.1.$88329.0.1"><span data-reactid=".0.2.0.1.$88329.0.1.0">8.6</span><span data-reactid=".0.2.0.1.$88329.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.2.0.1.$88329.0.2">Former Avenger Clint Barton has a seemingly simple mission: get back to his family for Christmas. Possible? Maybe with the help of Kate Bishop, a 22-year-old archer with dreams of becoming a superhero. The two are forced to work together when a presence from Barton’s past threatens to derail far more than the festive spirit.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.2.0.1.$88329.0.3">
+                                <div data-reactid=".0.2.0.1.$88329.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.2.0.1.$88329.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.2.0.1.$88329.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/xAKMj134XHQVNHLC6rWsccLMenG.jpg);" data-reactid=".0.2.0.1.$90462">
+                        <div class="overlay" data-reactid=".0.2.0.1.$90462.0">
+                            <div class="title" data-reactid=".0.2.0.1.$90462.0.0">Chucky</div>
+                            <div class="rating" data-reactid=".0.2.0.1.$90462.0.1"><span data-reactid=".0.2.0.1.$90462.0.1.0">8</span><span data-reactid=".0.2.0.1.$90462.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.2.0.1.$90462.0.2">After a vintage Chucky doll turns up at a suburban yard sale, an idyllic American town is thrown into chaos as a series of horrifying murders begin to expose the town’s hypocrisies and secrets. Meanwhile, the arrival of enemies — and allies — from Chucky’s past threatens to expose the truth behind the killings, as well as the demon doll’s untold origins.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.2.0.1.$90462.0.3">
+                                <div data-reactid=".0.2.0.1.$90462.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.2.0.1.$90462.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.2.0.1.$90462.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/gFZriCkpJYsApPZEF3jhxL4yLzG.jpg);" data-reactid=".0.2.0.1.$71446">
+                        <div class="overlay" data-reactid=".0.2.0.1.$71446.0">
+                            <div class="title" data-reactid=".0.2.0.1.$71446.0.0">Money Heist</div>
+                            <div class="rating" data-reactid=".0.2.0.1.$71446.0.1"><span data-reactid=".0.2.0.1.$71446.0.1.0">8.3</span><span data-reactid=".0.2.0.1.$71446.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.2.0.1.$71446.0.2">To carry out the biggest heist in history, a mysterious man called The Professor recruits a band of eight robbers who have a single characteristic: none of them has anything to lose. Five months of seclusion - memorizing every step, every detail, every probability - culminate in eleven days locked up in the National Coinage and Stamp Factory of Spain, surrounded by police forces and with dozens of hostages in their power, to find out whether their suicide wager will lead to everything or nothing.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.2.0.1.$71446.0.3">
+                                <div data-reactid=".0.2.0.1.$71446.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.2.0.1.$71446.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.2.0.1.$71446.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/1P3QtW1IkivqDrKbbwuR0zCYIf8.jpg);" data-reactid=".0.2.0.1.$71914">
+                        <div class="overlay" data-reactid=".0.2.0.1.$71914.0">
+                            <div class="title" data-reactid=".0.2.0.1.$71914.0.0">The Wheel of Time</div>
+                            <div class="rating" data-reactid=".0.2.0.1.$71914.0.1"><span data-reactid=".0.2.0.1.$71914.0.1.0">8.1</span><span data-reactid=".0.2.0.1.$71914.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.2.0.1.$71914.0.2">Follow Moiraine, a member of the shadowy and influential all-female organization called the “Aes Sedai” as she embarks on a dangerous, world-spanning journey with five young men and women. Moiraine believes one of them might be the reincarnation of an incredibly powerful individual, whom prophecies say will either save humanity or destroy it.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.2.0.1.$71914.0.3">
+                                <div data-reactid=".0.2.0.1.$71914.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.2.0.1.$71914.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.2.0.1.$71914.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/yfXSvNfF43S0cxpxCEKaU17yZ64.jpg);" data-reactid=".0.2.0.1.$2778">
+                        <div class="overlay" data-reactid=".0.2.0.1.$2778.0">
+                            <div class="title" data-reactid=".0.2.0.1.$2778.0.0">Wheel of Fortune</div>
+                            <div class="rating" data-reactid=".0.2.0.1.$2778.0.1"><span data-reactid=".0.2.0.1.$2778.0.1.0">7.3</span><span data-reactid=".0.2.0.1.$2778.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.2.0.1.$2778.0.2">This game show sees contestants solve word puzzles, similar to those used in Hangman, to win cash and prizes determined by spinning a giant carnival wheel.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.2.0.1.$2778.0.3">
+                                <div data-reactid=".0.2.0.1.$2778.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.2.0.1.$2778.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.2.0.1.$2778.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="TitleList" data-loaded="true" data-reactid=".0.3">
+            <div class="Title" data-reactid=".0.3.0">
+                <h1 data-reactid=".0.3.0.0">Trending now</h1>
+                <div class="titles-wrapper" data-reactid=".0.3.0.1">
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/lNyLSOKMMeUPr1RsL4KcRuIXwHt.jpg);" data-reactid=".0.3.0.1.$580489">
+                        <div class="overlay" data-reactid=".0.3.0.1.$580489.0">
+                            <div class="title" data-reactid=".0.3.0.1.$580489.0.0">Venom: Let There Be Carnage</div>
+                            <div class="rating" data-reactid=".0.3.0.1.$580489.0.1"><span data-reactid=".0.3.0.1.$580489.0.1.0">7.2</span><span data-reactid=".0.3.0.1.$580489.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.3.0.1.$580489.0.2">After finding a host body in investigative reporter Eddie Brock, the alien symbiote must face a new enemy, Carnage, the alter ego of serial killer Cletus Kasady.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.3.0.1.$580489.0.3">
+                                <div data-reactid=".0.3.0.1.$580489.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.3.0.1.$580489.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.3.0.1.$580489.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/5uVhMGsps81CN0S4U9NF0Z4tytG.jpg);" data-reactid=".0.3.0.1.$512195">
+                        <div class="overlay" data-reactid=".0.3.0.1.$512195.0">
+                            <div class="title" data-reactid=".0.3.0.1.$512195.0.0">Red Notice</div>
+                            <div class="rating" data-reactid=".0.3.0.1.$512195.0.1"><span data-reactid=".0.3.0.1.$512195.0.1.0">6.8</span><span data-reactid=".0.3.0.1.$512195.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.3.0.1.$512195.0.2">An Interpol-issued Red Notice is a global alert to hunt and capture the world's most wanted. But when a daring heist brings together the FBI's top profiler and two rival criminals, there's no telling what will happen.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.3.0.1.$512195.0.3">
+                                <div data-reactid=".0.3.0.1.$512195.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.3.0.1.$512195.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.3.0.1.$512195.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/cinER0ESG0eJ49kXlExM0MEWGxW.jpg);" data-reactid=".0.3.0.1.$566525">
+                        <div class="overlay" data-reactid=".0.3.0.1.$566525.0">
+                            <div class="title" data-reactid=".0.3.0.1.$566525.0.0">Shang-Chi and the Legend of the Ten Rings</div>
+                            <div class="rating" data-reactid=".0.3.0.1.$566525.0.1"><span data-reactid=".0.3.0.1.$566525.0.1.0">7.8</span><span data-reactid=".0.3.0.1.$566525.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.3.0.1.$566525.0.2">Shang-Chi must confront the past he thought he left behind when he is drawn into the web of the mysterious Ten Rings organization.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.3.0.1.$566525.0.3">
+                                <div data-reactid=".0.3.0.1.$566525.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.3.0.1.$566525.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.3.0.1.$566525.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/zBkHCpLmHjW2uVURs5uZkaVmgKR.jpg);" data-reactid=".0.3.0.1.$585245">
+                        <div class="overlay" data-reactid=".0.3.0.1.$585245.0">
+                            <div class="title" data-reactid=".0.3.0.1.$585245.0.0">Clifford the Big Red Dog</div>
+                            <div class="rating" data-reactid=".0.3.0.1.$585245.0.1"><span data-reactid=".0.3.0.1.$585245.0.1.0">7.6</span><span data-reactid=".0.3.0.1.$585245.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.3.0.1.$585245.0.2">As Emily struggles to fit in at home and at school, she discovers a small red puppy who is destined to become her best friend. When Clifford magically undergoes one heck of a growth spurt, becomes a gigantic dog and attracts the attention of a genetics company, Emily and her Uncle Casey have to fight the forces of greed as they go on the run across New York City. Along the way, Clifford affects the lives of everyone around him and teaches Emily and her uncle the true meaning of acceptance and unconditional love.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.3.0.1.$585245.0.3">
+                                <div data-reactid=".0.3.0.1.$585245.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.3.0.1.$585245.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.3.0.1.$585245.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/g2djzUqA6mFplzC03gDk0WSyg99.jpg);" data-reactid=".0.3.0.1.$568124">
+                        <div class="overlay" data-reactid=".0.3.0.1.$568124.0">
+                            <div class="title" data-reactid=".0.3.0.1.$568124.0.0">Encanto</div>
+                            <div class="rating" data-reactid=".0.3.0.1.$568124.0.1"><span data-reactid=".0.3.0.1.$568124.0.1.0">7.4</span><span data-reactid=".0.3.0.1.$568124.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.3.0.1.$568124.0.2">The tale of an extraordinary family, the Madrigals, who live hidden in the mountains of Colombia, in a magical house, in a vibrant town, in a wondrous, charmed place called an Encanto. The magic of the Encanto has blessed every child in the family with a unique gift from super strength to the power to heal—every child except one, Mirabel. But when she discovers that the magic surrounding the Encanto is in danger, Mirabel decides that she, the only ordinary Madrigal, might just be her exceptional family's last hope.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.3.0.1.$568124.0.3">
+                                <div data-reactid=".0.3.0.1.$568124.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.3.0.1.$568124.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.3.0.1.$568124.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="TitleList" data-loaded="true" data-reactid=".0.4">
+            <div class="Title" data-reactid=".0.4.0">
+                <h1 data-reactid=".0.4.0.0">Most watched in Horror</h1>
+                <div class="titles-wrapper" data-reactid=".0.4.0.1">
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/o2OSpKzXuB1edCDyVC2MXAxXwyJ.jpg);" data-reactid=".0.4.0.1.$633802">
+                        <div class="overlay" data-reactid=".0.4.0.1.$633802.0">
+                            <div class="title" data-reactid=".0.4.0.1.$633802.0.0">Приворот. Чёрное венчание</div>
+                            <div class="rating" data-reactid=".0.4.0.1.$633802.0.1"><span data-reactid=".0.4.0.1.$633802.0.1.0">7.2</span><span data-reactid=".0.4.0.1.$633802.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.4.0.1.$633802.0.2">Terror strikes when a heartbroken woman uses black magic to get her husband back.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.4.0.1.$633802.0.3">
+                                <div data-reactid=".0.4.0.1.$633802.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.4.0.1.$633802.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.4.0.1.$633802.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/ugZbX5lKx4L9ONEu0WTNbR96J0t.jpg);" data-reactid=".0.4.0.1.$768447">
+                        <div class="overlay" data-reactid=".0.4.0.1.$768447.0">
+                            <div class="title" data-reactid=".0.4.0.1.$768447.0.0">Motherly</div>
+                            <div class="rating" data-reactid=".0.4.0.1.$768447.0.1"><span data-reactid=".0.4.0.1.$768447.0.1.0">7.1</span><span data-reactid=".0.4.0.1.$768447.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.4.0.1.$768447.0.2">Kate and her daughter Beth live alone in an isolated farmhouse in the woods, but when Kate slowly begins to suspect that something sinister is happening, her motherly instincts are put to the test.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.4.0.1.$768447.0.3">
+                                <div data-reactid=".0.4.0.1.$768447.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.4.0.1.$768447.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.4.0.1.$768447.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/7OcRErUXXdAVAHg6y5cjn56ivtu.jpg);" data-reactid=".0.4.0.1.$576845">
+                        <div class="overlay" data-reactid=".0.4.0.1.$576845.0">
+                            <div class="title" data-reactid=".0.4.0.1.$576845.0.0">Last Night in Soho</div>
+                            <div class="rating" data-reactid=".0.4.0.1.$576845.0.1"><span data-reactid=".0.4.0.1.$576845.0.1.0">7.5</span><span data-reactid=".0.4.0.1.$576845.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.4.0.1.$576845.0.2">A young girl, passionate about fashion design, is mysteriously able to enter the 1960s where she encounters her idol, a dazzling wannabe singer. But 1960s London is not what it seems, and time seems to be falling apart with shady consequences.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.4.0.1.$576845.0.3">
+                                <div data-reactid=".0.4.0.1.$576845.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.4.0.1.$576845.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.4.0.1.$576845.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/vkojfC1xykW9XBCyDDCMYeHqLEf.jpg);" data-reactid=".0.4.0.1.$775943">
+                        <div class="overlay" data-reactid=".0.4.0.1.$775943.0">
+                            <div class="title" data-reactid=".0.4.0.1.$775943.0.0">Llanto Maldito</div>
+                            <div class="rating" data-reactid=".0.4.0.1.$775943.0.1"><span data-reactid=".0.4.0.1.$775943.0.1.0">4.7</span><span data-reactid=".0.4.0.1.$775943.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.4.0.1.$775943.0.2">Sara and Óscar, a couple going through a marital crisis, decide to spend a week in a remote country cabin with their two children, Alicia and Tomás. The family tries to have a quiet time, but something strange happens there. There is a woman who prowls through the forest and cries uncontrollably looking for a baby she has just lost. This deeply affects the family who will have to stay together to survive this nightmare.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.4.0.1.$775943.0.3">
+                                <div data-reactid=".0.4.0.1.$775943.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.4.0.1.$775943.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.4.0.1.$775943.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/zaY1FoAc39lHWaA6jUF93t95D7O.jpg);" data-reactid=".0.4.0.1.$460458">
+                        <div class="overlay" data-reactid=".0.4.0.1.$460458.0">
+                            <div class="title" data-reactid=".0.4.0.1.$460458.0.0">Resident Evil: Welcome to Raccoon City</div>
+                            <div class="rating" data-reactid=".0.4.0.1.$460458.0.1"><span data-reactid=".0.4.0.1.$460458.0.1.0">6</span><span data-reactid=".0.4.0.1.$460458.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.4.0.1.$460458.0.2">Once the booming home of pharmaceutical giant Umbrella Corporation, Raccoon City is now a dying Midwestern town. The company’s exodus left the city a wasteland…with great evil brewing below the surface. When that evil is unleashed, the townspeople are forever…changed…and a small group of survivors must work together to uncover the truth behind Umbrella and make it through the night.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.4.0.1.$460458.0.3">
+                                <div data-reactid=".0.4.0.1.$460458.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.4.0.1.$460458.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.4.0.1.$460458.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="TitleList" data-loaded="true" data-reactid=".0.5">
+            <div class="Title" data-reactid=".0.5.0">
+                <h1 data-reactid=".0.5.0.0">Sci-Fi greats</h1>
+                <div class="titles-wrapper" data-reactid=".0.5.0.1">
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/lNyLSOKMMeUPr1RsL4KcRuIXwHt.jpg);" data-reactid=".0.5.0.1.$580489">
+                        <div class="overlay" data-reactid=".0.5.0.1.$580489.0">
+                            <div class="title" data-reactid=".0.5.0.1.$580489.0.0">Venom: Let There Be Carnage</div>
+                            <div class="rating" data-reactid=".0.5.0.1.$580489.0.1"><span data-reactid=".0.5.0.1.$580489.0.1.0">7.2</span><span data-reactid=".0.5.0.1.$580489.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.5.0.1.$580489.0.2">After finding a host body in investigative reporter Eddie Brock, the alien symbiote must face a new enemy, Carnage, the alter ego of serial killer Cletus Kasady.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.5.0.1.$580489.0.3">
+                                <div data-reactid=".0.5.0.1.$580489.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.5.0.1.$580489.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.5.0.1.$580489.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/vIPIyTJqcgOKgKcExCvTDpLpTYW.jpg);" data-reactid=".0.5.0.1.$634649">
+                        <div class="overlay" data-reactid=".0.5.0.1.$634649.0">
+                            <div class="title" data-reactid=".0.5.0.1.$634649.0.0">Spider-Man: No Way Home</div>
+                            <div class="rating" data-reactid=".0.5.0.1.$634649.0.1"><span data-reactid=".0.5.0.1.$634649.0.1.0">0</span><span data-reactid=".0.5.0.1.$634649.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.5.0.1.$634649.0.2">Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a super-hero. When he asks for help from Doctor Strange the stakes become even more dangerous, forcing him to discover what it truly means to be Spider-Man.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.5.0.1.$634649.0.3">
+                                <div data-reactid=".0.5.0.1.$634649.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.5.0.1.$634649.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.5.0.1.$634649.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/iUeeZ5PWfZGgUtCJfwcgmCfdzoI.jpg);" data-reactid=".0.5.0.1.$482321">
+                        <div class="overlay" data-reactid=".0.5.0.1.$482321.0">
+                            <div class="title" data-reactid=".0.5.0.1.$482321.0.0">Ron's Gone Wrong</div>
+                            <div class="rating" data-reactid=".0.5.0.1.$482321.0.1"><span data-reactid=".0.5.0.1.$482321.0.1.0">8.6</span><span data-reactid=".0.5.0.1.$482321.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.5.0.1.$482321.0.2">In a world where walking, talking, digitally connected bots have become children's best friends, an 11-year-old finds that his robot buddy doesn't quite work the same as the others do.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.5.0.1.$482321.0.3">
+                                <div data-reactid=".0.5.0.1.$482321.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.5.0.1.$482321.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.5.0.1.$482321.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/lyvszvJJqqI8aqBJ70XzdCNoK0y.jpg);" data-reactid=".0.5.0.1.$524434">
+                        <div class="overlay" data-reactid=".0.5.0.1.$524434.0">
+                            <div class="title" data-reactid=".0.5.0.1.$524434.0.0">Eternals</div>
+                            <div class="rating" data-reactid=".0.5.0.1.$524434.0.1"><span data-reactid=".0.5.0.1.$524434.0.1.0">7.1</span><span data-reactid=".0.5.0.1.$524434.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.5.0.1.$524434.0.2">The Eternals are a team of ancient aliens who have been living on Earth in secret for thousands of years. When an unexpected tragedy forces them out of the shadows, they are forced to reunite against mankind’s most ancient enemy, the Deviants.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.5.0.1.$524434.0.3">
+                                <div data-reactid=".0.5.0.1.$524434.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.5.0.1.$524434.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.5.0.1.$524434.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/oE6bhqqVFyIECtBzqIuvh6JdaB5.jpg);" data-reactid=".0.5.0.1.$522402">
+                        <div class="overlay" data-reactid=".0.5.0.1.$522402.0">
+                            <div class="title" data-reactid=".0.5.0.1.$522402.0.0">Finch</div>
+                            <div class="rating" data-reactid=".0.5.0.1.$522402.0.1"><span data-reactid=".0.5.0.1.$522402.0.1.0">8.2</span><span data-reactid=".0.5.0.1.$522402.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.5.0.1.$522402.0.2">On a post-apocalyptic Earth, a robot, built to protect the life of his dying creator's beloved dog, learns about life, love, friendship, and what it means to be human.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.5.0.1.$522402.0.3">
+                                <div data-reactid=".0.5.0.1.$522402.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.5.0.1.$522402.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.5.0.1.$522402.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="TitleList" data-loaded="true" data-reactid=".0.6">
+            <div class="Title" data-reactid=".0.6.0">
+                <h1 data-reactid=".0.6.0.0">Comedy magic</h1>
+                <div class="titles-wrapper" data-reactid=".0.6.0.1">
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/5uVhMGsps81CN0S4U9NF0Z4tytG.jpg);" data-reactid=".0.6.0.1.$512195">
+                        <div class="overlay" data-reactid=".0.6.0.1.$512195.0">
+                            <div class="title" data-reactid=".0.6.0.1.$512195.0.0">Red Notice</div>
+                            <div class="rating" data-reactid=".0.6.0.1.$512195.0.1"><span data-reactid=".0.6.0.1.$512195.0.1.0">6.8</span><span data-reactid=".0.6.0.1.$512195.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.6.0.1.$512195.0.2">An Interpol-issued Red Notice is a global alert to hunt and capture the world's most wanted. But when a daring heist brings together the FBI's top profiler and two rival criminals, there's no telling what will happen.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.6.0.1.$512195.0.3">
+                                <div data-reactid=".0.6.0.1.$512195.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.6.0.1.$512195.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.6.0.1.$512195.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/zBkHCpLmHjW2uVURs5uZkaVmgKR.jpg);" data-reactid=".0.6.0.1.$585245">
+                        <div class="overlay" data-reactid=".0.6.0.1.$585245.0">
+                            <div class="title" data-reactid=".0.6.0.1.$585245.0.0">Clifford the Big Red Dog</div>
+                            <div class="rating" data-reactid=".0.6.0.1.$585245.0.1"><span data-reactid=".0.6.0.1.$585245.0.1.0">7.6</span><span data-reactid=".0.6.0.1.$585245.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.6.0.1.$585245.0.2">As Emily struggles to fit in at home and at school, she discovers a small red puppy who is destined to become her best friend. When Clifford magically undergoes one heck of a growth spurt, becomes a gigantic dog and attracts the attention of a genetics company, Emily and her Uncle Casey have to fight the forces of greed as they go on the run across New York City. Along the way, Clifford affects the lives of everyone around him and teaches Emily and her uncle the true meaning of acceptance and unconditional love.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.6.0.1.$585245.0.3">
+                                <div data-reactid=".0.6.0.1.$585245.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.6.0.1.$585245.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.6.0.1.$585245.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/g2djzUqA6mFplzC03gDk0WSyg99.jpg);" data-reactid=".0.6.0.1.$568124">
+                        <div class="overlay" data-reactid=".0.6.0.1.$568124.0">
+                            <div class="title" data-reactid=".0.6.0.1.$568124.0.0">Encanto</div>
+                            <div class="rating" data-reactid=".0.6.0.1.$568124.0.1"><span data-reactid=".0.6.0.1.$568124.0.1.0">7.4</span><span data-reactid=".0.6.0.1.$568124.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.6.0.1.$568124.0.2">The tale of an extraordinary family, the Madrigals, who live hidden in the mountains of Colombia, in a magical house, in a vibrant town, in a wondrous, charmed place called an Encanto. The magic of the Encanto has blessed every child in the family with a unique gift from super strength to the power to heal—every child except one, Mirabel. But when she discovers that the magic surrounding the Encanto is in danger, Mirabel decides that she, the only ordinary Madrigal, might just be her exceptional family's last hope.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.6.0.1.$568124.0.3">
+                                <div data-reactid=".0.6.0.1.$568124.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.6.0.1.$568124.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.6.0.1.$568124.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/iUeeZ5PWfZGgUtCJfwcgmCfdzoI.jpg);" data-reactid=".0.6.0.1.$482321">
+                        <div class="overlay" data-reactid=".0.6.0.1.$482321.0">
+                            <div class="title" data-reactid=".0.6.0.1.$482321.0.0">Ron's Gone Wrong</div>
+                            <div class="rating" data-reactid=".0.6.0.1.$482321.0.1"><span data-reactid=".0.6.0.1.$482321.0.1.0">8.6</span><span data-reactid=".0.6.0.1.$482321.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.6.0.1.$482321.0.2">In a world where walking, talking, digitally connected bots have become children's best friends, an 11-year-old finds that his robot buddy doesn't quite work the same as the others do.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.6.0.1.$482321.0.3">
+                                <div data-reactid=".0.6.0.1.$482321.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.6.0.1.$482321.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.6.0.1.$482321.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Item" style="background-image:url(http://image.tmdb.org/t/p/original/1zgob2Z8xVE3RZUgOKnHKcVPzOE.jpg);" data-reactid=".0.6.0.1.$877183">
+                        <div class="overlay" data-reactid=".0.6.0.1.$877183.0">
+                            <div class="title" data-reactid=".0.6.0.1.$877183.0.0">The Simpsons in Plusaversary</div>
+                            <div class="rating" data-reactid=".0.6.0.1.$877183.0.1"><span data-reactid=".0.6.0.1.$877183.0.1.0">6.8</span><span data-reactid=".0.6.0.1.$877183.0.1.1"> / 10</span></div>
+                            <div class="plot" data-reactid=".0.6.0.1.$877183.0.2">The Simpsons host a Disney+ Day party and everyone is on the list… except Homer. With friends from across the service and music fit for a Disney Princess, Plusaversary is Springfield's event of the year.</div>
+                            <div data-toggled="false" class="ListToggle" data-reactid=".0.6.0.1.$877183.0.3">
+                                <div data-reactid=".0.6.0.1.$877183.0.3.0"><i class="fa fa-fw fa-plus" data-reactid=".0.6.0.1.$877183.0.3.0.0"></i><i class="fa fa-fw fa-check" data-reactid=".0.6.0.1.$877183.0.3.0.1"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react-dom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script id="rendered-js">
+    /////////////////
+    /// COMPONENTS //
+    /////////////////
+
+    // Container
+    var App = React.createClass({ displayName: "App",
+        apiKey: '87dfa1c669eea853da609d4968d294be',
+        getInitialState: function () {
+            return { data: [] };
+        },
+        performSearch: function (e) {
+            // stop form from submitting
+            e.preventDefault();
+
+            // get the value
+            var val = $('.Search input').val();
+
+            // Do the thing
+            var requestUrl = 'https://api.themoviedb.org/3/search/multi?query=' + val + '&api_key=' + this.apiKey;
+
+            $.ajax({
+                url: requestUrl,
+                dataType: 'json',
+                cache: false,
+                success: function (data) {
+                    this.setState({ data: data });
+                }.bind(this),
+                error: function (xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this) });
+
+
+        },
+        componentDidUpdate: function () {
+
+        },
+        render: function () {
+
+            if (this.state.data.results) {
+                console.log(this.state.data);
+            }
+
+            return /*#__PURE__*/(
+                React.createElement("div", null, /*#__PURE__*/
+                    React.createElement(Header, { onSubmit: this.performSearch }), /*#__PURE__*/
+                    React.createElement(Hero, null), /*#__PURE__*/
+                    React.createElement(TitleList, { title: "Top TV picks for Jack", url: "discover/tv?sort_by=popularity.desc&page=1" }), /*#__PURE__*/
+                    React.createElement(TitleList, { title: "Trending now", url: "discover/movie?sort_by=popularity.desc&page=1" }), /*#__PURE__*/
+                    React.createElement(TitleList, { title: "Most watched in Horror", url: "genre/27/movies?sort_by=popularity.desc&page=1" }), /*#__PURE__*/
+                    React.createElement(TitleList, { title: "Sci-Fi greats", url: "genre/878/movies?sort_by=popularity.desc&page=1" }), /*#__PURE__*/
+                    React.createElement(TitleList, { title: "Comedy magic", url: "genre/35/movies?sort_by=popularity.desc&page=1" })));
+
+
+        } });
+
+
+    ////////////
+    // Header //
+    ////////////
+
+    var Header = React.createClass({ displayName: "Header",
+        render: function () {
+            return /*#__PURE__*/(
+                React.createElement("header", { className: "Header" }, /*#__PURE__*/
+                    React.createElement(Logo, null), /*#__PURE__*/
+                    React.createElement(Navigation, null), /*#__PURE__*/
+                    React.createElement(Search, { onSubmit: this.props.onSubmit }), /*#__PURE__*/
+                    React.createElement(UserProfile, null)));
+
+
+        } });
+
+
+    // Logo
+    var Logo = React.createClass({ displayName: "Logo",
+        render: function () {
+            return /*#__PURE__*/(
+                React.createElement("div", { id: "logo", className: "Logo" }, /*#__PURE__*/
+                    React.createElement("svg", { version: "1.1", width: "300", height: "81.386726", id: "svg3262" }, /*#__PURE__*/
+                        React.createElement("g", { transform: "translate(-384.28572,-428.81172)", id: "layer1" }, /*#__PURE__*/
+                            React.createElement("g", { transform: "matrix(2.5445375,0,0,2.5445375,1157.1714,-1457.8678)", id: "g3235" }, /*#__PURE__*/
+                                React.createElement("path", { d: "m -203.09972,771.41415 c 1.6425,0.15875 3.2825,0.33 4.92,0.5075 l 3.615,-8.92625 3.43625,9.74875 c 1.76375,0.22125 3.525,0.4525 5.2825,0.695 l -6.02375,-17.09625 6.02625,-14.88 -5.10375,0 -0.0525,0.0725 -3.255,8.03875 -2.8575,-8.11125 -5.03875,0 5.2025,14.7625 -6.15125,15.18875 z", id: "path3015", style: { fill: '#b81d24', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' } }), /*#__PURE__*/
+                                React.createElement("path", { d: "m -206.91147,771.06478 0,-29.60125 -5.0375,0 0,29.18625 c 1.68125,0.12875 3.36125,0.26875 5.0375,0.415", id: "path3019", style: { fill: '#b81d24', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' } }), /*#__PURE__*/
+                                React.createElement("path", { d: "m -244.7486,769.4089 c 1.36,0 2.7175,0.01 4.07375,0.0213 l 0,-10.875 6.05125,0 0,-4.63125 -6.05125,0 0,-7.825 6.96875,0 0,-4.63625 -12.02625,0 0,27.95 c 0.3275,0 0.655,-0.004 0.98375,-0.004", id: "path3023", style: { fill: '#b81d24', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' } }), /*#__PURE__*/
+                                React.createElement("path", { d: "m -260.3881,769.69191 c 1.6775,-0.06 3.3575,-0.11 5.04,-0.15125 l 0,-23.44125 4.7075,0 0,-4.63625 -14.45625,0 0,4.63625 4.70875,0 0,23.5925 z", id: "path3035", style: { fill: '#b81d24', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' } }), /*#__PURE__*/
+                                React.createElement("path", { d: "m -298.91059,772.81378 0,-17.63625 5.96375,16.92375 c 1.83375,-0.20625 3.67125,-0.4 5.5125,-0.5825 l 0,-30.055 -4.8325,0 0,18.2675 -6.43625,-18.2675 -0.2075,0 -4.8325,0 0,31.98375 0.03,0 c 1.5975,-0.22125 3.19875,-0.43125 4.8025,-0.63375", id: "path3039", style: { fill: '#b81d24', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' } }), /*#__PURE__*/
+                                React.createElement("path", { d: "m -269.95297,746.09903 0,-4.63625 -12.0275,0 0,24.9125 0,4.6375 0,0.004 c 3.99125,-0.345 7.99625,-0.63375 12.0175,-0.86875 l 0,-0.004 0,-1.33625 0,-3.3 c -2.325,0.135 -4.645,0.29125 -6.96,0.46375 l 0,-7.415 6.05125,0 0,-4.63375 -6.05125,0 0,-7.82375 6.97,0 z", id: "path3051", style: { fill: '#b81d24', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' } }), /*#__PURE__*/
+                                React.createElement("path", { d: "m -223.72272,765.2864 0,-23.82375 -5.05875,0 0,23.605 0,4.63625 0,0.005 c 4.02375,0.1475 8.0325,0.35375 12.0275,0.6125 l 0,-0.006 0,-1.4975 0,-3.13875 c -2.31875,-0.15 -4.64125,-0.28 -6.96875,-0.3925", id: "path3055", style: { fill: '#b81d24', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none' } }))))));
+
+
+
+
+
+        } });
+
+
+    // Navigation
+    var Navigation = React.createClass({ displayName: "Navigation",
+        render: function () {
+            return /*#__PURE__*/(
+                React.createElement("div", { id: "navigation", className: "Navigation" }, /*#__PURE__*/
+                    React.createElement("nav", null, /*#__PURE__*/
+                        React.createElement("ul", null, /*#__PURE__*/
+                            React.createElement("li", null, "Browse"), /*#__PURE__*/
+                            React.createElement("li", null, "My list"), /*#__PURE__*/
+                            React.createElement("li", null, "Top picks"), /*#__PURE__*/
+                            React.createElement("li", null, "Recent")))));
+
+
+
+
+        } });
+
+
+    // Search
+    var Search = React.createClass({ displayName: "Search",
+        render: function () {
+            return /*#__PURE__*/(
+                React.createElement("form", { onSubmit: this.props.onSubmit, id: "search", className: "Search" }, /*#__PURE__*/
+                    React.createElement("input", { type: "search", placeholder: "Search for a title..." })));
+
+
+        } });
+
+
+    // User Profile
+    var UserProfile = React.createClass({ displayName: "UserProfile",
+        render: function () {
+            return /*#__PURE__*/(
+                React.createElement("div", { className: "UserProfile" }, /*#__PURE__*/
+                    React.createElement("div", { className: "User" }, /*#__PURE__*/
+                        React.createElement("div", { className: "name" }, "Thiago Alves"), /*#__PURE__*/
+                        React.createElement("div", { className: "image" }, /*#__PURE__*/React.createElement("img", { src: "https://avatars.githubusercontent.com/u/20546278?v=4" }))), /*#__PURE__*/
+
+                    React.createElement("div", { className: "UserProfile-menu" }, /*#__PURE__*/
+                        React.createElement("div", { className: "UserProfileSwitch" }, /*#__PURE__*/
+                            React.createElement("ul", null, /*#__PURE__*/
+                                React.createElement("li", null, /*#__PURE__*/
+                                    React.createElement("div", { className: "UserProfile-image" }, /*#__PURE__*/
+                                        React.createElement("img", { src: "http://lorempixel.com/96/96" })), /*#__PURE__*/
+
+                                    React.createElement("div", { className: "UserProfile-name" }, "Alexander")), /*#__PURE__*/
+
+
+
+                                React.createElement("li", null, /*#__PURE__*/
+                                    React.createElement("div", { className: "UserProfile-image" }, /*#__PURE__*/
+                                        React.createElement("img", { src: "http://lorempixel.com/96/96" })), /*#__PURE__*/
+
+                                    React.createElement("div", { className: "UserProfile-name" }, "Mattias")))), /*#__PURE__*/
+
+
+
+
+
+                        React.createElement("div", { className: "UserNavigation" }, /*#__PURE__*/
+                            React.createElement("ul", null, /*#__PURE__*/
+                                React.createElement("li", null, "Your Account"), /*#__PURE__*/
+                                React.createElement("li", null, "Help Center"), /*#__PURE__*/
+                                React.createElement("li", null, "Sign out of Netflix"))))));
+
+
+
+
+
+        } });
+
+
+    //////////
+    // Hero //
+    //////////
+
+    var Hero = React.createClass({ displayName: "Hero",
+        render: function () {
+            return /*#__PURE__*/(
+                React.createElement("div", { id: "hero", className: "Hero", style: { backgroundImage: 'url(https://wallpaperaccess.com/full/1097130.jpg)' } }, /*#__PURE__*/
+                    React.createElement("div", { className: "content" }, /*#__PURE__*/
+                        React.createElement("img", { className: "logo", src: "http://www.returndates.com/backgrounds/narcos.logo.png", alt: "" }), /*#__PURE__*/
+                        React.createElement("h2", null, "Season 2 now available"), /*#__PURE__*/
+                        React.createElement("p", null, "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque id quam sapiente unde voluptatum alias vero debitis, magnam quis quod."), /*#__PURE__*/
+                        React.createElement("div", { className: "button-wrapper" }, /*#__PURE__*/
+                            React.createElement(HeroButton, { primary: true, text: "Watch now" }), /*#__PURE__*/
+                            React.createElement(HeroButton, { primary: false, text: "+ My list" }))), /*#__PURE__*/
+
+
+                    React.createElement("div", { className: "overlay" })));
+
+
+        } });
+
+
+    // Hero Button
+    var HeroButton = React.createClass({ displayName: "HeroButton",
+        render: function () {
+            return /*#__PURE__*/(
+                React.createElement("a", { href: "#", className: "Button", "data-primary": this.props.primary }, this.props.text));
+
+        } });
+
+
+    ////////////////
+    // Title List //
+    ////////////////
+
+    // Title List Container
+
+    var TitleList = React.createClass({ displayName: "TitleList",
+        apiKey: '87dfa1c669eea853da609d4968d294be',
+        getInitialState: function () {
+            return { data: [], mounted: false };
+        },
+        loadContent: function () {
+            var requestUrl = 'https://api.themoviedb.org/3/' + this.props.url + '&api_key=' + this.apiKey;
+
+            $.ajax({
+                url: requestUrl,
+                dataType: 'json',
+                cache: false,
+                success: function (data) {
+                    this.setState({ data: data });
+                    // console.log(data);
+                }.bind(this),
+                error: function (xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this) });
+
+        },
+        componentDidMount: function () {
+            this.loadContent();
+            this.setState({ mounted: true });
+        },
+        componentWillUnmount: function () {
+            this.setState({ mounted: false });
+        },
+        render: function () {
+            if (this.state.data.results) {
+                var titles = this.state.data.results.map(function (title, i) {
+                    if (i < 5) {
+
+                        var backDrop = 'http://image.tmdb.org/t/p/original' + title.backdrop_path;
+                        if (!title.name) {
+                            var name = title.original_title;
+                        } else {
+                            var name = title.name;
+                        }
+
+                        return /*#__PURE__*/(
+                            React.createElement(Item, { key: title.id, title: name, score: title.vote_average, overview: title.overview, backdrop: backDrop }));
+
+
+                    }
+                });
+
+            } else {
+                var titles = '';
+            }
+
+            return /*#__PURE__*/(
+                React.createElement("div", { ref: "titlecategory", className: "TitleList", "data-loaded": this.state.mounted }, /*#__PURE__*/
+                    React.createElement("div", { className: "Title" }, /*#__PURE__*/
+                        React.createElement("h1", null, this.props.title), /*#__PURE__*/
+                        React.createElement("div", { className: "titles-wrapper" },
+                            titles))));
+
+
+
+
+        } });
+
+
+    // Title List Item
+    var Item = React.createClass({ displayName: "Item",
+        render: function () {
+            return /*#__PURE__*/(
+                React.createElement("div", { className: "Item", style: { backgroundImage: 'url(' + this.props.backdrop + ')' } }, /*#__PURE__*/
+                    React.createElement("div", { className: "overlay" }, /*#__PURE__*/
+                        React.createElement("div", { className: "title" }, this.props.title), /*#__PURE__*/
+                        React.createElement("div", { className: "rating" }, this.props.score, " / 10"), /*#__PURE__*/
+                        React.createElement("div", { className: "plot" }, this.props.overview), /*#__PURE__*/
+                        React.createElement(ListToggle, null))));
+
+
+
+        } });
+
+
+    // ListToggle
+    var ListToggle = React.createClass({ displayName: "ListToggle",
+        getInitialState: function () {
+            return { toggled: false };
+        },
+        handleClick: function () {
+            if (this.state.toggled === true) {
+                this.setState({ toggled: false });
+            } else {
+                this.setState({ toggled: true });
+            }
+
+        },
+        render: function () {
+            return /*#__PURE__*/(
+                React.createElement("div", { onClick: this.handleClick, "data-toggled": this.state.toggled, className: "ListToggle" }, /*#__PURE__*/
+                    React.createElement("div", null, /*#__PURE__*/
+                        React.createElement("i", { className: "fa fa-fw fa-plus" }), /*#__PURE__*/
+                        React.createElement("i", { className: "fa fa-fw fa-check" }))));
+
+
+
+        } });
+
+
+
+
+    ReactDOM.render( /*#__PURE__*/
+        React.createElement(App, null),
+        document.getElementById('app'));
+    //# sourceURL=pen.js
+</script>
+</body>
+</html>
